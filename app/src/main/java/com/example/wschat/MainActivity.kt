@@ -8,18 +8,21 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.wschat.adapter.WSListAdapter
+import com.example.wschat.adapter.MessagePagingAdapter
+import com.example.wschat.db.MessageItem
 import com.example.wschat.ui.SettingsActivity
+import com.example.wschat.viewmodel.PagingViewModel
 import com.example.wschat.ws.WSClient
 
 class MainActivity : AppCompatActivity() {
-    private val listAdapter = WSListAdapter()
-    private val list = mutableListOf<String>()
+    private val listAdapter = MessagePagingAdapter(this)
     var mRecyclerView: RecyclerView? = null
     var tip: TextView? = null
+    private val pagingViewModel by viewModels<PagingViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,8 +33,6 @@ class MainActivity : AppCompatActivity() {
         tip = findViewById<Button>(R.id.tip)
         mRecyclerView!!.layoutManager = LinearLayoutManager(this)
         mRecyclerView!!.adapter = listAdapter
-        listAdapter.setNewInstance(list)
-        listAdapter.notifyDataSetChanged()
         send.setOnClickListener {
             val message = edit.text.toString()
             if (message.isNotEmpty()) {
@@ -40,14 +41,26 @@ class MainActivity : AppCompatActivity() {
                 edit.setText("")
             }
         }
+        pagingViewModel.getLiveData().observe(this) {
+            listAdapter.submitList(it)
+            runOnUiThread {
+                listAdapter.notifyItemChanged(listAdapter.itemCount)
+                mRecyclerView!!.smoothScrollToPosition(listAdapter.itemCount)
+            }
+        }
         loadWS()
     }
 
     private fun updateList(message: String) {
         runOnUiThread {
-            mRecyclerView!!.smoothScrollToPosition(listAdapter.itemCount);
-            list.add(message)
-            listAdapter.notifyItemInserted(list.size - 1)
+            App.dao.insertMessage(
+                MessageItem(
+                    0,
+                    "${System.currentTimeMillis()}",
+                    "server",
+                    message
+                )
+            )
         }
     }
 
