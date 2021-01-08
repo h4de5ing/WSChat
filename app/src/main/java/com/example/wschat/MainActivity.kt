@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     private val listAdapter = WSListAdapter()
     private val list = mutableListOf<String>()
     var mRecyclerView: RecyclerView? = null
+    var tip: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         mRecyclerView = findViewById<View>(R.id.recyclerview) as RecyclerView
         val edit = findViewById<EditText>(R.id.edit)
         val send = findViewById<Button>(R.id.send)
+        tip = findViewById<Button>(R.id.tip)
         mRecyclerView!!.layoutManager = LinearLayoutManager(this)
         mRecyclerView!!.adapter = listAdapter
         listAdapter.setNewInstance(list)
@@ -53,6 +56,17 @@ class MainActivity : AppCompatActivity() {
         WSClient.getClient().setWSMessageListener { message ->
             println("拿到进度，更新UI $message")
             updateList(message)
+        }
+        WSClient.getClient().setWsStatusUpdateListener {
+            runOnUiThread {
+                tip?.apply {
+                    if (it) {
+                        this.visibility = View.GONE
+                    } else {
+                        this.visibility = View.VISIBLE
+                    }
+                }
+            }
         }
     }
 

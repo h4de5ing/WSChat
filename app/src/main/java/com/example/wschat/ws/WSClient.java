@@ -50,6 +50,12 @@ public class WSClient {
         }, 0, 10 * 1000);
     }
 
+    public void updateStatus() {
+        if (wsStatusUpdateListener != null) {
+            wsStatusUpdateListener.update(isConnected);
+        }
+    }
+
     public void dispatcher() {
         println("关闭WebSocket终端");
         if (okHttpClient != null) {
@@ -61,9 +67,14 @@ public class WSClient {
     }
 
     private WSMessageUpdateListener wsMessageUpdateListener;
+    private WSStatusUpdateListener wsStatusUpdateListener;
 
     public void setWSMessageListener(WSMessageUpdateListener listener) {
         wsMessageUpdateListener = listener;
+    }
+
+    public void setWsStatusUpdateListener(WSStatusUpdateListener listener) {
+        wsStatusUpdateListener = listener;
     }
 
     private void connect(String url) {
@@ -86,6 +97,7 @@ public class WSClient {
                 super.onOpen(webSocket, response);
                 isConnected = true;
                 println("WebSocket 打开成功");
+                updateStatus();
             }
 
             @Override
@@ -93,6 +105,7 @@ public class WSClient {
                 super.onClosed(webSocket, code, reason);
                 isConnected = false;
                 println("WebSocket 已经关闭");
+                updateStatus();
             }
 
             @Override
@@ -100,6 +113,7 @@ public class WSClient {
                 super.onClosing(webSocket, code, reason);
                 isConnected = false;
                 println("WebSocket 服务器端主动关闭");
+                updateStatus();
             }
 
             @Override
@@ -107,6 +121,7 @@ public class WSClient {
                 super.onFailure(webSocket, t, response);
                 isConnected = false;
                 println("WebSocket 打开失败 " + t.getMessage());
+                updateStatus();
             }
 
             @Override
@@ -115,6 +130,7 @@ public class WSClient {
                 isConnected = true;
                 println("接收到消息1:" + text);
                 if (wsMessageUpdateListener != null) wsMessageUpdateListener.update(text);
+                updateStatus();
             }
 
             @Override
@@ -122,6 +138,7 @@ public class WSClient {
                 super.onMessage(webSocket, bytes);
                 isConnected = true;
                 System.out.println("接收到消息2:" + bytes);
+                updateStatus();
             }
         });
     }
