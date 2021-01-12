@@ -3,7 +3,6 @@ package com.example.wschat.db
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.wschat.ext.date
 
 @Entity(tableName = "message")
 data class MessageItem(
@@ -12,7 +11,8 @@ data class MessageItem(
     @ColumnInfo(name = "sender") val sender: String,
     @ColumnInfo(name = "content") val content: String
 ) {
+    var checkBox: Boolean = false //是否选中
     override fun toString(): String {
-        return "(id=$id, time='${time.toLong().date()}', sender='$sender') \n$content"
+        return "MessageItem(id=$id, time='$time', sender='$sender', checkBox=$checkBox)\n$content"
     }
 }

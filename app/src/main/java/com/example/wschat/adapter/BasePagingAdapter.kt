@@ -8,12 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 abstract class BasePagingAdapter<T, VH : RecyclerView.ViewHolder>(diffCallback: DiffUtil.ItemCallback<T>) :
     PagedListAdapter<T, VH>(diffCallback) {
     private lateinit var itemClickListener: (item: T) -> Unit
-    private lateinit var itemLongClickListener: (view: View, item: T) -> Unit
+    private lateinit var itemLongClickListener: (view: View, position: Int, item: T) -> Unit
     fun addOnItemClickListener(listener: (item: T) -> Unit) {
         itemClickListener = listener
     }
 
-    fun addOnItemLongClickListener(listener: (view: View, item: T) -> Unit) {
+    fun addOnItemLongClickListener(listener: (view: View, position: Int, item: T) -> Unit) {
         itemLongClickListener = listener
     }
 
@@ -32,7 +32,7 @@ abstract class BasePagingAdapter<T, VH : RecyclerView.ViewHolder>(diffCallback: 
             })
             view.setOnLongClickListener(fun(_: View): Boolean {
                 getItem(position)?.let { item ->
-                    itemLongClickListener.invoke(view, item)
+                    itemLongClickListener.invoke(view, position, item)
                 }
                 return false
             })

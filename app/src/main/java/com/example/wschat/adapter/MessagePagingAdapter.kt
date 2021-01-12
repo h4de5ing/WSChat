@@ -43,4 +43,5 @@ class MessagePagingAdapter(val context: Context) :
 class ArchiveViewHolder2(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val tvName: TextView = itemView.findViewById(R.id.tv)
     val copy: TextView = itemView.findViewById(R.id.copy)
+    //val checkbox: CheckBox = itemView.findViewById(R.id.check_box)
 }

@@ -14,6 +14,6 @@ interface MessageDao {
     fun insertMessage(vararg messageItem: MessageItem)
 
     @Query("DELETE FROM message where id=(:id)")
-    fun deleteMessage(id: Int)
+    fun deleteMessage(id: Long)
 
 }
