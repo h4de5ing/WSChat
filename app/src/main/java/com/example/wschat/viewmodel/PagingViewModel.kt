@@ -8,6 +8,10 @@ import com.example.wschat.App
 import com.example.wschat.db.MessageItem
 
 class PagingViewModel : ViewModel() {
+    fun getAllDate(): LiveData<MutableList<MessageItem>> {
+        return App.dao.selectAllDate()
+    }
+
     fun getLiveData(): LiveData<PagedList<MessageItem>> {
         val factory = App.dao.selectAll()
         val config = PagedList.Config.Builder()

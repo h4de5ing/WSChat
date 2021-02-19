@@ -1,13 +1,15 @@
 <resources>
     <string name="app_name">WSChat</string>
     <string name="title_activity_settings">设置</string>
-
+    <string name="search">搜索</string>
+    <string name="search_view_hint">请输入需要搜索的内容</string>
     <!-- Preference Titles -->
     <string name="messages_header">服务器配置</string>
     <string name="sync_header">Sync</string>
 
     <!-- Messages Preferences -->
     <string name="signature_title">ws服务器</string>
+    <string name="http_title">http服务器</string>
     <string name="reply_title">Default reply action</string>
 
     <!-- Sync Preferences -->

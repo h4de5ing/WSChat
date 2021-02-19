@@ -32,7 +32,7 @@ class MessagePagingAdapter(val context: Context) :
     override fun bindItem(holder: ArchiveViewHolder2, position: Int) {
         val item = getItem(position)
         item?.apply {
-            holder.tvName.text = item.content
+            holder.tvName.text = item.toString()
         }
         holder.copy.setOnClickListener {
             CopyUtils.copy(context, holder.copy, item?.content)
