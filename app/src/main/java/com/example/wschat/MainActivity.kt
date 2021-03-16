@@ -2,13 +2,8 @@ package com.example.wschat
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.ContextMenu
-import android.view.MenuItem
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.view.*
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +14,9 @@ import com.example.wschat.ui.BaseSearchActivity
 import com.example.wschat.ui.SettingsActivity
 import com.example.wschat.utils.HttpRequest
 import com.example.wschat.viewmodel.PagingViewModel
+import com.example.wschat.widget.HorizontalPosition
+import com.example.wschat.widget.SmartPopupWindow
+import com.example.wschat.widget.VerticalPosition
 import com.example.wschat.ws.WSClient
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONArray
@@ -26,8 +24,7 @@ import kotlin.concurrent.thread
 
 /**
  * 参考微信选择面板
- * 复制 转发 删除 多选 翻译 打开(网址) 文字里面如果包含网址 可以直接打开
- * 搜索
+ * 转发 删除 多选 翻译 打开(网址) 文字里面如果包含网址 可以直接打开
  */
 class MainActivity : BaseSearchActivity() {
     private val listAdapter = WSListAdapter()
@@ -73,6 +70,9 @@ class MainActivity : BaseSearchActivity() {
                     mRecyclerView!!.smoothScrollToPosition(listAdapter.itemCount - 1)
             }
         }
+        listAdapter.setOnItemClickListener { adapter, view, position ->
+            //initPop(view)
+        }
         listAdapter.setOnItemLongClickListener { adapter, view, position ->
             longPressId = (adapter.getItem(position) as MessageItem).id
             longPressPosition = position
@@ -80,7 +80,38 @@ class MainActivity : BaseSearchActivity() {
             registerForContextMenu(view)
             false
         }
+        onClickItem.observe(this) { id ->
+            println("搜索信息的id:$id")
+        }
         loadWS()
+    }
+
+    private fun initPop(v: View) {
+        val view = LayoutInflater.from(this).inflate(R.layout.pop, null, false)
+//        val popWindow = PopupWindow(
+//            view,
+//            ViewGroup.LayoutParams.MATCH_PARENT,
+//            ViewGroup.LayoutParams.MATCH_PARENT,
+//            true
+//        )
+//        popWindow.animationStyle = R.anim.slide_down
+//        popWindow.isTouchable = true
+//        popWindow.setTouchInterceptor { v, event ->
+//            {
+//                println()
+//                //返回true touch事件将被拦截
+//            }
+//            false
+//        }
+        //popWindow.setBackgroundDrawable(ColorDrawable(0x00000000))
+        //popWindow.setBackgroundDrawable(ColorDrawable(0x77000000))
+        //PopupWindowCompat.showAsDropDown(popWindow, v, 0, 0, Gravity.START)
+        //popWindow.showAsDropDown(v)
+        SmartPopupWindow.Builder
+            .build(MainActivity@ this, view)
+            .createPopupWindow()
+            .showAtAnchorView(v, VerticalPosition.BELOW, HorizontalPosition.ALIGN_LEFT)
+
     }
 
     private fun receivedMessage(message: String) {
@@ -118,11 +149,7 @@ class MainActivity : BaseSearchActivity() {
         WSClient.getClient().setWsStatusUpdateListener {
             runOnUiThread {
                 tip?.apply {
-                    if (it) {
-                        this.visibility = View.GONE
-                    } else {
-                        this.visibility = View.VISIBLE
-                    }
+                    this.visibility = if (it) View.GONE else View.VISIBLE
                 }
             }
         }
@@ -156,10 +183,7 @@ class MainActivity : BaseSearchActivity() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.delete -> {
-                App.dao.deleteMessage(longPressId)
-                listAdapter.notifyItemRemoved(longPressPosition)
-            }
+            R.id.delete -> App.dao.deleteMessage(longPressId)
         }
         return super.onContextItemSelected(item)
     }
