@@ -14,8 +14,6 @@ data class MessageItem(
 ) {
     var checkBox: Boolean = false //是否选中
     override fun toString(): String {
-        return "(id=$id, time='${
-            time.toLong().date()
-        }', sender='$sender', checkBox=$checkBox)\n$content"
+        return "$content\n$id,${time.toLong().date()},$sender"
     }
 }

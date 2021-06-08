@@ -10,6 +10,7 @@ import com.example.wschat.adapter.WSListAdapter
 import com.example.wschat.db.MessageItem
 import com.example.wschat.ext.showConfirmDialog
 import com.example.wschat.ui.BaseSearchActivity
+import com.example.wschat.ui.DeleteActivity
 import com.example.wschat.ui.SettingsActivity
 import com.example.wschat.utils.CopyUtils
 import com.example.wschat.viewmodel.PagingViewModel
@@ -127,8 +128,9 @@ class MainActivity : BaseSearchActivity() {
                 { anyLayer, _ ->
                     anyLayer.dismiss()
                     //多选
-                    managerControl.visibility = View.VISIBLE
-                    inputControl.visibility = View.GONE
+                    //managerControl.visibility = View.VISIBLE
+                    //inputControl.visibility = View.GONE
+                    startActivity(Intent(this@MainActivity, DeleteActivity::class.java))
                 }, R.id.button4
             )
             .onClick(

@@ -19,6 +19,8 @@ allprojects {
         google()
         jcenter()
         maven { url "https://www.jitpack.io" }
+        //maven { url 'https://gitee.com/lex1992/repository/raw/master/repository' }
+        maven { url 'F://repository/repository/repository' }
     }
 }
 
