@@ -12,6 +12,10 @@ class PagingViewModel : ViewModel() {
         return App.dao.selectAllDate()
     }
 
+    fun delete(id: Long) {
+        return App.dao.deleteMessage(id)
+    }
+
     fun getLiveData(): LiveData<PagedList<MessageItem>> {
         val factory = App.dao.selectAll()
         val config = PagedList.Config.Builder()

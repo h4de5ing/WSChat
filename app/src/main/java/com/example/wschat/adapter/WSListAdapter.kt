@@ -10,7 +10,7 @@ import com.example.wschat.ext.date
 import com.example.wschat.utils.CopyUtils
 
 
-class WSListAdapter(layoutRes: Int = R.layout.item_tv) :
+class WSListAdapter constructor(layoutRes: Int = R.layout.item_tv) :
     BaseQuickAdapter<MessageItem, BaseViewHolder>(layoutRes), LoadMoreModule {
     override fun convert(holder: BaseViewHolder, item: MessageItem) {
         holder.setText(R.id.tv, "${item.time.toLong().date()}\n${item.content}")

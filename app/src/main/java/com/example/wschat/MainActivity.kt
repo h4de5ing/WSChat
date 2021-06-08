@@ -2,25 +2,23 @@ package com.example.wschat
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
-import android.widget.*
+import android.view.MenuItem
+import android.view.View
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.wschat.adapter.WSListAdapter
 import com.example.wschat.db.MessageItem
 import com.example.wschat.ext.showConfirmDialog
 import com.example.wschat.ui.BaseSearchActivity
 import com.example.wschat.ui.SettingsActivity
-import com.example.wschat.utils.HttpRequest
+import com.example.wschat.utils.CopyUtils
 import com.example.wschat.viewmodel.PagingViewModel
-import com.example.wschat.widget.HorizontalPosition
-import com.example.wschat.widget.SmartPopupWindow
-import com.example.wschat.widget.VerticalPosition
 import com.example.wschat.ws.WSClient
 import kotlinx.android.synthetic.main.activity_main.*
-import org.json.JSONArray
-import kotlin.concurrent.thread
+import kotlinx.android.synthetic.main.content_main.*
+import per.goweii.anylayer.AnyLayer
+import per.goweii.anylayer.widget.SwipeLayout
+
 
 /**
  * 参考微信选择面板
@@ -28,28 +26,20 @@ import kotlin.concurrent.thread
  */
 class MainActivity : BaseSearchActivity() {
     private val listAdapter = WSListAdapter()
-    var mRecyclerView: RecyclerView? = null
-    var tip: TextView? = null
 
     private val pagingViewModel by viewModels<PagingViewModel>()
     var longPressId = -1L
     var longPressPosition = -1
+    var longPressItem: MessageItem? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(!isTaskRoot)
-        println("MainActivity is running !!")
-        mRecyclerView = findViewById<View>(R.id.recyclerview) as RecyclerView
-        val edit = findViewById<EditText>(R.id.edit)
-        val send = findViewById<Button>(R.id.send)
-        tip = findViewById<Button>(R.id.tip)
-        val managerControl = findViewById<LinearLayout>(R.id.managerControl)
-        val inputControl = findViewById<LinearLayout>(R.id.inputControl)
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.stackFromEnd = true
-        mRecyclerView!!.layoutManager = linearLayoutManager
-        mRecyclerView!!.adapter = listAdapter
+        recyclerview!!.layoutManager = linearLayoutManager
+        recyclerview!!.adapter = listAdapter
         send.setOnClickListener {
             val message = edit.text.toString()
             if (message.isNotEmpty()) {
@@ -67,51 +57,93 @@ class MainActivity : BaseSearchActivity() {
             runOnUiThread {
                 listAdapter.notifyDataSetChanged()
                 if (listAdapter.itemCount > 1)
-                    mRecyclerView!!.smoothScrollToPosition(listAdapter.itemCount - 1)
+                    recyclerview!!.smoothScrollToPosition(listAdapter.itemCount)
             }
         }
-        listAdapter.setOnItemClickListener { adapter, view, position ->
-            //initPop(view)
-        }
         listAdapter.setOnItemLongClickListener { adapter, view, position ->
-            longPressId = (adapter.getItem(position) as MessageItem).id
+            longPressItem = (adapter.getItem(position)) as MessageItem
+            longPressId = longPressItem!!.id
             longPressPosition = position
-            println("长按弹出菜单多选删除$longPressId $longPressPosition")
-            registerForContextMenu(view)
+            initPop(view)
             false
         }
         onClickItem.observe(this) { id ->
             println("搜索信息的id:$id")
         }
         loadWS()
+        loadShare()
+    }
+
+    private fun loadShare() {
+        try {
+            if (Intent.ACTION_SEND == intent.action && "text/plain" == intent.type) {
+                edit.setText("${intent.getStringExtra(Intent.EXTRA_TEXT)}")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun initPop(v: View) {
-        val view = LayoutInflater.from(this).inflate(R.layout.pop, null, false)
-//        val popWindow = PopupWindow(
-//            view,
-//            ViewGroup.LayoutParams.MATCH_PARENT,
-//            ViewGroup.LayoutParams.MATCH_PARENT,
-//            true
-//        )
-//        popWindow.animationStyle = R.anim.slide_down
-//        popWindow.isTouchable = true
-//        popWindow.setTouchInterceptor { v, event ->
-//            {
-//                println()
-//                //返回true touch事件将被拦截
-//            }
-//            false
-//        }
-        //popWindow.setBackgroundDrawable(ColorDrawable(0x00000000))
-        //popWindow.setBackgroundDrawable(ColorDrawable(0x77000000))
-        //PopupWindowCompat.showAsDropDown(popWindow, v, 0, 0, Gravity.START)
-        //popWindow.showAsDropDown(v)
-        SmartPopupWindow.Builder
-            .build(MainActivity@ this, view)
-            .createPopupWindow()
-            .showAtAnchorView(v, VerticalPosition.BELOW, HorizontalPosition.ALIGN_LEFT)
-
+        AnyLayer.dialog(this@MainActivity)
+            .contentView(R.layout.pop)
+            //.backgroundDimDefault()
+            .backgroundBlurPercent(0.05f)
+            .swipeDismiss(SwipeLayout.Direction.BOTTOM)
+            .onClick(
+                { anyLayer, _ ->
+                    anyLayer.dismiss()
+                    //复制
+                    CopyUtils.copy(this@MainActivity, v, "${longPressItem?.content}")
+                }, R.id.button1
+            )
+            .onClick(
+                { anyLayer, _ ->
+                    anyLayer.dismiss()
+                    val intent = Intent()
+                    intent.putExtra(Intent.EXTRA_TEXT, "${longPressItem?.content}")
+                    intent.type = "text/plain"
+                    startActivity(
+                        Intent.createChooser(
+                            intent,
+                            resources.getText(R.string.app_name)
+                        )
+                    )
+                    //转发
+                }, R.id.button2
+            )
+            .onClick(
+                { anyLayer, _ ->
+                    anyLayer.dismiss()
+                    //删除
+                    showConfirmDialog("确实删除 -> ${longPressItem?.content}") {
+                        if (it) {
+                            pagingViewModel.delete(longPressItem?.id!!)
+                        }
+                    }
+                }, R.id.button3
+            )
+            .onClick(
+                { anyLayer, _ ->
+                    anyLayer.dismiss()
+                    //多选
+                    managerControl.visibility = View.VISIBLE
+                    inputControl.visibility = View.GONE
+                }, R.id.button4
+            )
+            .onClick(
+                { anyLayer, _ ->
+                    anyLayer.dismiss()
+                    //翻译
+                }, R.id.button5
+            )
+            .onClick(
+                { anyLayer, _ ->
+                    anyLayer.dismiss()
+                    //打开
+                }, R.id.button6
+            )
+            .show()
     }
 
     private fun receivedMessage(message: String) {
@@ -159,58 +191,10 @@ class MainActivity : BaseSearchActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_settings -> startActivity(Intent(this, SettingsActivity::class.java))
-            R.id.action_load_server -> showConfirmDialog { if (it) load() }
-            R.id.action_clear_server -> showConfirmDialog { if (it) clear() }
-            R.id.action_backup_server -> showConfirmDialog { if (it) showToast("备份服务器信息") }
             R.id.action_clear_local -> showConfirmDialog { if (it) with(App) { dao.clear() } }
             R.id.action_sort_local -> showConfirmDialog { if (it) showToast("本地排序") }
             R.id.action_backup_local -> showConfirmDialog { if (it) showToast("备份本地信息") }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    //Item长按上下文菜单
-    override fun onCreateContextMenu(
-        menu: ContextMenu,
-        v: View?,
-        menuInfo: ContextMenu.ContextMenuInfo?
-    ) {
-        menuInflater.inflate(R.menu.pop, menu)
-        menu.setHeaderIcon(R.mipmap.ic_launcher_round)
-        menu.setHeaderTitle("选项操作")
-        super.onCreateContextMenu(menu, v, menuInfo)
-    }
-
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.delete -> App.dao.deleteMessage(longPressId)
-        }
-        return super.onContextItemSelected(item)
-    }
-
-    private fun load() {
-        thread {
-            val response: String =
-                HttpRequest.sendGet("${App.httpServer}/messages", null, null)
-            val jsonArray = JSONArray(response)
-            for (i in 0 until jsonArray.length()) {
-                val item = jsonArray.getJSONObject(i)
-                println(
-                    "id:" + item.getString("id") + " message:" + item.getString("message") + " date:" + item.getLong(
-                        "date"
-                    )
-                )
-            }
-        }
-    }
-
-    private fun clear() {
-        thread {
-            val response: String =
-                HttpRequest.sendGet("${App.httpServer}/clear", null, null)
-            runOnUiThread {
-                showToast(response)
-            }
-        }
     }
 }

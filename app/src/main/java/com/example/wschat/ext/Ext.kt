@@ -7,11 +7,16 @@ import java.util.*
 
 fun Long.date(): String = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).format(Date(this))
 
-//确认对话框
 fun AppCompatActivity.showConfirmDialog(change: ((Boolean) -> Unit)) {
+    this.showConfirmDialog("您确定执行本次操作", change)
+}
+
+
+//确认对话框
+fun AppCompatActivity.showConfirmDialog(message: String, change: ((Boolean) -> Unit)) {
     this.runOnUiThread {
         val builder = AlertDialog.Builder(this)
-        builder.setMessage("您确定执行本次操作")
+        builder.setMessage(message)
         builder.setCancelable(false)
         builder.setNegativeButton(android.R.string.cancel) { _, _ ->
             run {
