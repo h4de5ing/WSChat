@@ -50,6 +50,13 @@ class DeleteActivity : BaseReturnActivity() {
                     val list = adapter?.map?.filter { it.value }?.keys?.toList()
                     if (list != null && list.isNotEmpty()) list.forEach { pagingViewModel.delete(it) }
                     println("删除:${list}")
+                    try {
+                        adapter?.clear()
+                        val size = adapter?.map?.filter { it.value }?.toList()?.size
+                        delete.isEnabled = size != null && size > 0
+                        result.text = "选中：${size}"
+                    } catch (e: Exception) {
+                    }
                 }
             }
         }

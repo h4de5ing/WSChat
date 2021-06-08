@@ -8,7 +8,7 @@ import java.util.*
 
 class App : Application() {
     companion object {
-        var wsServer = "ws://172.16.1.45:8080/ws/wschat-${UUID.randomUUID()}"
+        var wsServer = "ws://172.16.1.45:8080/wschat-${UUID.randomUUID()}"
         var httpServer = "http://172.16.1.45:8080"
         lateinit var dao: MessageDao
     }

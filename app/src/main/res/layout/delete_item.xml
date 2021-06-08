@@ -31,7 +31,6 @@
             android:layout_height="wrap_content"
             android:padding="3dp"
             android:textColor="@color/black"
-            android:textIsSelectable="true"
             android:textSize="18sp"
             app:layout_constraintStart_toEndOf="@+id/checkbox"
             app:layout_constraintTop_toTopOf="parent"

@@ -63,7 +63,9 @@ public class DeleteAdapter extends RecyclerView.Adapter<DeleteAdapter.Holder> {
     public Map<Long, Boolean> getMap() {
         return Maps;
     }
-
+    public void clear(){
+        Maps.clear();
+    }
     public RecyclerViewChangeListener onChangeListener;
 
     public void setChangeListener(RecyclerViewChangeListener changeListener) {
@@ -80,6 +82,11 @@ public class DeleteAdapter extends RecyclerView.Adapter<DeleteAdapter.Holder> {
         if (Maps.get(list.get(position).getId()) == null)
             Maps.put(list.get(position).getId(), false);
         holder.checkBox.setChecked(Maps.get(list.get(position).getId()));
+        holder.setOnClickListener(v -> {
+            Boolean aBoolean = Maps.get(list.get(position).getId());
+            Maps.put(list.get(position).getId(), !aBoolean);
+            holder.checkBox.setChecked(!aBoolean);
+        });
     }
 
     @Override
@@ -90,11 +97,19 @@ public class DeleteAdapter extends RecyclerView.Adapter<DeleteAdapter.Holder> {
     public class Holder extends RecyclerView.ViewHolder {
         private CheckBox checkBox;
         private TextView province_name;
+        private View.OnClickListener listener;
+
+        public void setOnClickListener(View.OnClickListener l) {
+            listener = l;
+        }
 
         public Holder(View itemView) {
             super(itemView);
             checkBox = itemView.findViewById(R.id.checkbox);
             province_name = itemView.findViewById(R.id.province_name);
+            itemView.setOnClickListener(v -> {
+                if (listener != null) listener.onClick(itemView);
+            });
         }
     }
 
