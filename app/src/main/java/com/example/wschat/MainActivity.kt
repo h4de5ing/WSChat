@@ -175,18 +175,18 @@ class MainActivity : BaseSearchActivity() {
     }
 
     private fun loadWS() {
-        WSClient.getClient().retry(App.wsServer)
-        WSClient.getClient().setWSMessageListener { message ->
-            println("拿到进度，更新UI $message")
-            receivedMessage(message)
-        }
-        WSClient.getClient().setWsStatusUpdateListener {
-            runOnUiThread {
-                tip?.apply {
-                    this.visibility = if (it) View.GONE else View.VISIBLE
-                }
-            }
-        }
+        //WSClient.getClient().retry(App.wsServer)
+//        WSClient.getClient().setWSMessageListener { message ->
+//            println("拿到进度，更新UI $message")
+//            receivedMessage(message)
+//        }
+//        WSClient.getClient().setWsStatusUpdateListener {
+//            runOnUiThread {
+//                tip?.apply {
+//                    this.visibility = if (it) View.GONE else View.VISIBLE
+//                }
+//            }
+//        }
     }
 
 

@@ -1,9 +1,11 @@
 package com.example.wschat
 
 import android.app.Application
+import android.content.Intent
 import androidx.preference.PreferenceManager
 import com.example.wschat.db.MessageDao
 import com.example.wschat.db.MessageDatabase
+import com.example.wschat.services.GuardService
 import java.util.*
 
 class App : Application() {
@@ -17,6 +19,7 @@ class App : Application() {
         super.onCreate()
         dao = MessageDatabase.create(this).messageDao()
         loadConfig()
+        startService(Intent(this, GuardService::class.java))
     }
 
     fun loadConfig() {
