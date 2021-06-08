@@ -12,9 +12,11 @@ import com.example.wschat.ext.showConfirmDialog
 import com.example.wschat.ui.BaseSearchActivity
 import com.example.wschat.ui.DeleteActivity
 import com.example.wschat.ui.SettingsActivity
+import com.example.wschat.ui.WebViewActivity
 import com.example.wschat.utils.CopyUtils
 import com.example.wschat.viewmodel.PagingViewModel
 import com.example.wschat.ws.WSClient
+import com.github.h4de5ing.base.timer
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import per.goweii.anylayer.AnyLayer
@@ -27,7 +29,6 @@ import per.goweii.anylayer.widget.SwipeLayout
  */
 class MainActivity : BaseSearchActivity() {
     private val listAdapter = WSListAdapter()
-
     private val pagingViewModel by viewModels<PagingViewModel>()
     var longPressId = -1L
     var longPressPosition = -1
@@ -88,7 +89,6 @@ class MainActivity : BaseSearchActivity() {
     private fun initPop(v: View) {
         AnyLayer.dialog(this@MainActivity)
             .contentView(R.layout.pop)
-            //.backgroundDimDefault()
             .backgroundBlurPercent(0.05f)
             .swipeDismiss(SwipeLayout.Direction.BOTTOM)
             .onClick(
@@ -128,8 +128,6 @@ class MainActivity : BaseSearchActivity() {
                 { anyLayer, _ ->
                     anyLayer.dismiss()
                     //多选
-                    //managerControl.visibility = View.VISIBLE
-                    //inputControl.visibility = View.GONE
                     startActivity(Intent(this@MainActivity, DeleteActivity::class.java))
                 }, R.id.button4
             )
@@ -142,6 +140,12 @@ class MainActivity : BaseSearchActivity() {
             .onClick(
                 { anyLayer, _ ->
                     anyLayer.dismiss()
+                    startActivity(
+                        Intent(
+                            this@MainActivity,
+                            WebViewActivity::class.java
+                        ).putExtra("url", "${longPressItem?.content}")
+                    )
                     //打开
                 }, R.id.button6
             )
@@ -175,18 +179,18 @@ class MainActivity : BaseSearchActivity() {
     }
 
     private fun loadWS() {
-        //WSClient.getClient().retry(App.wsServer)
-//        WSClient.getClient().setWSMessageListener { message ->
-//            println("拿到进度，更新UI $message")
-//            receivedMessage(message)
-//        }
-//        WSClient.getClient().setWsStatusUpdateListener {
-//            runOnUiThread {
-//                tip?.apply {
-//                    this.visibility = if (it) View.GONE else View.VISIBLE
-//                }
-//            }
-//        }
+        timer(3 * 1000) {
+            println("WS状态:${WSClient.getClient().isConnected}")
+            if (!WSClient.getClient().isConnected) {
+                WSClient.getClient().retry(App.wsServer)
+            }
+            runOnUiThread {
+                tip?.apply {
+                    this.visibility =
+                        if (WSClient.getClient().isConnected) View.GONE else View.VISIBLE
+                }
+            }
+        }
     }
 
 

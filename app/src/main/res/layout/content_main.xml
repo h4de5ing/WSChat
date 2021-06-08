@@ -31,49 +31,6 @@
         tools:listitem="@layout/item_tv" />
 
     <LinearLayout
-        android:id="@+id/managerControl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        tools:visibility="gone">
-
-        <TextView
-            android:id="@+id/tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="已选择"
-            android:textColor="#1A1A1A"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tv_select_num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textColor="#1A1A1A"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/btn_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="删除"
-            android:textColor="#b7b8bd"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/select_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="全选"
-            android:textColor="#000001"
-            android:textSize="14sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/inputControl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -36,7 +36,9 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".ui.WebViewActivity"
+            android:label="@string/activity_title_browser" />
         <service android:name=".services.GuardService" />
     </application>
 

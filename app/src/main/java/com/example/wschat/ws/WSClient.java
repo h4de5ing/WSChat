@@ -7,8 +7,6 @@ import androidx.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -40,14 +38,13 @@ public class WSClient {
         if (webSocket != null) {
             webSocket.close(1000, "disconnect");
         }
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (!isConnected && mUrl != null && mUrl.length() > 0) {
-                    connect(url);
-                }
-            }
-        }, 0, 10 * 1000);
+        if (!isConnected && !mUrl.isEmpty()) {
+            connect(url);
+        }
+    }
+
+    public boolean isConnected() {
+        return isConnected && webSocket != null;
     }
 
     public void updateStatus() {

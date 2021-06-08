@@ -16,7 +16,7 @@ class GuardService : Service() {
     override fun onCreate() {
         super.onCreate()
         println("启动 GuardService")
-        WSClient.getClient().retry(App.wsServer)
+        //WSClient.getClient().retry(App.wsServer)
         WSClient.getClient().setWSMessageListener { message ->
             println("拿到进度，更新UI $message")
             receivedMessage(message)
