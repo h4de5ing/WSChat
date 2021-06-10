@@ -38,7 +38,7 @@ public class WSClient {
         if (webSocket != null) {
             webSocket.close(1000, "disconnect");
         }
-        if (!isConnected && !mUrl.isEmpty()) {
+        if (!mUrl.isEmpty()) {
             connect(url);
         }
     }

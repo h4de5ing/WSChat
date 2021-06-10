@@ -196,6 +196,7 @@ class MainActivity : BaseSearchActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_reload -> showConfirmDialog { WSClient.getClient().retry(App.wsServer) }
             R.id.action_settings -> startActivity(Intent(this, SettingsActivity::class.java))
             R.id.action_clear_local -> showConfirmDialog { if (it) with(App) { dao.clear() } }
             R.id.action_sort_local -> showConfirmDialog { if (it) showToast("本地排序") }

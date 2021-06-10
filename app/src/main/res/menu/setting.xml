@@ -7,7 +7,10 @@
         android:title="@string/search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
-
+    <item
+        android:id="@+id/action_reload"
+        android:title="重连"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_settings"
         android:title="@string/title_activity_settings"
