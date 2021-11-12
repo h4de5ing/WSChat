@@ -1,19 +1,21 @@
 package com.example.wschat
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.wschat.adapter.WSListAdapter
 import com.example.wschat.db.MessageItem
 import com.example.wschat.ext.showConfirmDialog
-import com.example.wschat.ui.BaseSearchActivity
-import com.example.wschat.ui.DeleteActivity
-import com.example.wschat.ui.SettingsActivity
-import com.example.wschat.ui.WebViewActivity
+import com.example.wschat.ui.*
+import com.example.wschat.utils.Change
 import com.example.wschat.utils.CopyUtils
+import com.example.wschat.utils.setOnChange
 import com.example.wschat.viewmodel.PagingViewModel
 import com.example.wschat.ws.WSClient
 import com.github.h4de5ing.base.timer
@@ -21,7 +23,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import per.goweii.anylayer.AnyLayer
 import per.goweii.anylayer.widget.SwipeLayout
-
 
 /**
  * 参考微信选择面板
@@ -74,6 +75,7 @@ class MainActivity : BaseSearchActivity() {
         }
         loadWS()
         loadShare()
+        checkPermission()
     }
 
     private fun loadShare() {
@@ -179,7 +181,7 @@ class MainActivity : BaseSearchActivity() {
     }
 
     private fun loadWS() {
-        timer(3 * 1000) {
+        timer(3000) {
             println("WS状态:${WSClient.getClient().isConnected}")
             if (!WSClient.getClient().isConnected) {
                 WSClient.getClient().retry(App.wsServer)
@@ -193,9 +195,44 @@ class MainActivity : BaseSearchActivity() {
         }
     }
 
+    private val requestDataLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data = result.data?.getStringExtra("data")
+                Log.i("gh0st", "${result.resultCode} $data")
+                runOnUiThread {
+                    //edit.requestFocus()
+                    edit.setText(data)
+                }
+            }
+        }
+
+    private fun checkPermission() {
+        val requestMultiplePermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { it ->
+                //通过的权限
+                val grantedList = it.filterValues { it }.mapNotNull { it.key }
+                //是否所有权限通过
+                val allGranted = grantedList.size == it.size
+                Log.d("gh0st", "$allGranted 授权结果:${it}")
+            }
+        requestMultiplePermissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA
+            )
+        )
+        setOnChange(object : Change {
+            override fun change(message: String) {
+                Log.i("gh0st", "接口回调:${message}")
+            }
+        })
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_qr -> requestDataLauncher.launch(Intent(this, ZXingActivity::class.java))
             R.id.action_reload -> showConfirmDialog { WSClient.getClient().retry(App.wsServer) }
             R.id.action_settings -> startActivity(Intent(this, SettingsActivity::class.java))
             R.id.action_clear_local -> showConfirmDialog { if (it) with(App) { dao.clear() } }

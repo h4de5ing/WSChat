@@ -16,6 +16,10 @@
         android:title="@string/title_activity_settings"
         app:showAsAction="always" />
     <item
+        android:id="@+id/action_qr"
+        android:title="@string/title_activity_qr"
+        />
+    <item
         android:id="@+id/action_clear_local"
         android:title="清空本地缓存" />
     <item

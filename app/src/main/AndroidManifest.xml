@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".App"
@@ -21,9 +25,13 @@
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
+            android:name=".ui.ZXingActivity"
+            android:label="@string/title_activity_qr" />
+        <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.WSChat.NoActionBar">
+            android:theme="@style/Theme.WSChat.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,6 +47,7 @@
         <activity
             android:name=".ui.WebViewActivity"
             android:label="@string/activity_title_browser" />
+
         <service android:name=".services.GuardService" />
     </application>
 

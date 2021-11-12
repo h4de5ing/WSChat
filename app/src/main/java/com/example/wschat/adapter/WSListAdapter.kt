@@ -16,8 +16,6 @@ class WSListAdapter constructor(layoutRes: Int = R.layout.item_tv) :
         holder.setText(R.id.time, item.time.toLong().date())
         holder.setText(R.id.tv, item.content)
         val copy = holder.getView<TextView>(R.id.copy)
-        copy.setOnClickListener {
-            CopyUtils.copy(context, copy, item.content)
-        }
+        copy.setOnClickListener { CopyUtils.copy(context, copy, item.content) }
     }
 }
