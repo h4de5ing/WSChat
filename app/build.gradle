@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.wschat"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 31
         versionCode 1
         versionName "1.0"
@@ -81,6 +81,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     //implementation 'com.google.code.gson:gson:2.8.9'
+    implementation "androidx.multidex:multidex:2.0.1"
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
     implementation "com.squareup.okhttp3:okhttp:4.9.0"
     implementation "androidx.paging:paging-runtime-ktx:2.1.2"
@@ -90,5 +91,5 @@ dependencies {
     implementation 'com.github.h4de5ing.base:base:1.0-20210125'//基础工具
     implementation 'com.github.h4de5ing.baseui:baseui:1.0-20210709'//基础UI工具
     implementation 'com.github.youlookwhat:ByWebView:1.0.0'//webview
-    implementation 'com.github.RelinRan:ZxingCode:1.0.6'
+    implementation 'com.github.h4de5ing.zxing:zxing:1.0-20211112'//zxing 扫描
 }

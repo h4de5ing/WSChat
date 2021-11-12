@@ -4,9 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.android.zxing.view.ScanCodeView
 import com.example.wschat.R
 import com.example.wschat.utils.resultChange
+import com.github.h4de5ing.zxing.view.ScanCodeView
 import com.google.zxing.Result
 
 class ZXingActivity : AppCompatActivity() {

@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.ZXingActivity">
 
-    <com.android.zxing.view.ScanCodeView
+    <com.github.h4de5ing.zxing.view.ScanCodeView
         android:id="@+id/scan_code"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
