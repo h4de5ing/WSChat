@@ -13,12 +13,13 @@ import com.example.wschat.adapter.WSListAdapter
 import com.example.wschat.db.MessageItem
 import com.example.wschat.ext.showConfirmDialog
 import com.example.wschat.ui.*
-import com.example.wschat.utils.Change
-import com.example.wschat.utils.CopyUtils
-import com.example.wschat.utils.setOnChange
+import com.example.wschat.utils.*
 import com.example.wschat.viewmodel.PagingViewModel
-import com.example.wschat.ws.WSClient
-import com.github.h4de5ing.base.timer
+import com.github.h4de5ing.baseui.CopyUtils
+import com.github.h4de5ing.netlib.send2WS
+import com.github.h4de5ing.netlib.setOnChangeBoolean
+import com.github.h4de5ing.netlib.ws
+import com.github.h4de5ing.zxing.coder.ZXWriter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import per.goweii.anylayer.AnyLayer
@@ -46,8 +47,8 @@ class MainActivity : BaseSearchActivity() {
         send.setOnClickListener {
             val message = edit.text.toString()
             if (message.isNotEmpty()) {
+                send2WS(message)
                 sendMessage(message)
-                WSClient.getClient().sendMessage(message)
                 edit.setText("")
             }
         }
@@ -136,7 +137,8 @@ class MainActivity : BaseSearchActivity() {
             .onClick(
                 { anyLayer, _ ->
                     anyLayer.dismiss()
-                    //翻译
+                    //生成二维码
+                    showImage(this, ZXWriter.createQRCode("${longPressItem?.content}"))
                 }, R.id.button5
             )
             .onClick(
@@ -181,17 +183,18 @@ class MainActivity : BaseSearchActivity() {
     }
 
     private fun loadWS() {
-        timer(3000) {
-            println("WS状态:${WSClient.getClient().isConnected}")
-            if (!WSClient.getClient().isConnected) {
-                WSClient.getClient().retry(App.wsServer)
-            }
+        setOnChangeBoolean { isConnected ->
             runOnUiThread {
                 tip?.apply {
                     this.visibility =
-                        if (WSClient.getClient().isConnected) View.GONE else View.VISIBLE
+                        if (isConnected) View.GONE else View.VISIBLE
                 }
             }
+        }
+        ws(this, App.wsServer) { message ->
+            println("拿到进度，更新UI $message")
+            receivedMessage(message)
+            No.no(this, "收到来自服务器的消息", message)
         }
     }
 
@@ -223,17 +226,11 @@ class MainActivity : BaseSearchActivity() {
                 Manifest.permission.CAMERA
             )
         )
-        setOnChange(object : Change {
-            override fun change(message: String) {
-                Log.i("gh0st", "接口回调:${message}")
-            }
-        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_qr -> requestDataLauncher.launch(Intent(this, ZXingActivity::class.java))
-            R.id.action_reload -> showConfirmDialog { WSClient.getClient().retry(App.wsServer) }
             R.id.action_settings -> startActivity(Intent(this, SettingsActivity::class.java))
             R.id.action_clear_local -> showConfirmDialog { if (it) with(App) { dao.clear() } }
             R.id.action_sort_local -> showConfirmDialog { if (it) showToast("本地排序") }

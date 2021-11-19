@@ -8,17 +8,11 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
     <item
-        android:id="@+id/action_reload"
-        android:title="重连"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/action_settings"
-        android:title="@string/title_activity_settings"
-        app:showAsAction="always" />
+        android:title="@string/title_activity_settings" />
     <item
         android:id="@+id/action_qr"
-        android:title="@string/title_activity_qr"
-        />
+        android:title="@string/title_activity_qr" />
     <item
         android:id="@+id/action_clear_local"
         android:title="清空本地缓存" />

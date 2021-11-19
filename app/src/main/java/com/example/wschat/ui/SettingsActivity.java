@@ -10,7 +10,6 @@ import androidx.preference.PreferenceManager;
 
 import com.example.wschat.App;
 import com.example.wschat.R;
-import com.example.wschat.ws.WSClient;
 
 
 public class SettingsActivity extends AppCompatActivity {
@@ -21,7 +20,6 @@ public class SettingsActivity extends AppCompatActivity {
         String http = PreferenceManager.getDefaultSharedPreferences(this).getString("http", "");
         if (!TextUtils.isEmpty(signature)) {
             App.Companion.setWsServer(signature);
-            WSClient.getClient().retry(App.Companion.getWsServer());
         }
         if (!TextUtils.isEmpty(http)) {
             App.Companion.setHttpServer(http);

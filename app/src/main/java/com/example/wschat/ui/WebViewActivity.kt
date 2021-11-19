@@ -16,13 +16,11 @@ class WebViewActivity : BaseReturnActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_webview)
         var url = intent.getStringExtra("url")
-        if (url!!.startsWith("http")) {
-            byWebView = ByWebView
-                .with(this)
-                .setWebParent(container, LinearLayout.LayoutParams(-1, -1))
-                .useWebProgress(ContextCompat.getColor(this, R.color.colorAccent))
-                .loadUrl(url)
-        }
+        byWebView = ByWebView
+            .with(this)
+            .setWebParent(container, LinearLayout.LayoutParams(-1, -1))
+            .useWebProgress(ContextCompat.getColor(this, R.color.colorAccent))
+            .loadUrl(url)
     }
 
     override fun onPause() {

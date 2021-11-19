@@ -6,45 +6,13 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import com.example.wschat.App
 import com.example.wschat.R
-import com.example.wschat.db.MessageItem
-import com.example.wschat.utils.No
-import com.example.wschat.ws.WSClient
 
 class GuardService : Service() {
     override fun onCreate() {
         super.onCreate()
         println("启动 GuardService")
-        //WSClient.getClient().retry(App.wsServer)
-        WSClient.getClient().setWSMessageListener { message ->
-            println("拿到进度，更新UI $message")
-            receivedMessage(message)
-            No.no(this, "收到来自服务器的消息", message)
-        }
         createNotification()
-    }
-
-    private fun receivedMessage(message: String) {
-        App.dao.insertMessage(
-            MessageItem(
-                0,
-                "${System.currentTimeMillis()}",
-                "server",
-                message
-            )
-        )
-    }
-
-    private fun sendMessage(message: String) {
-        App.dao.insertMessage(
-            MessageItem(
-                0,
-                "${System.currentTimeMillis()}",
-                "client",
-                message
-            )
-        )
     }
 
     override fun onBind(intent: Intent?): IBinder? {

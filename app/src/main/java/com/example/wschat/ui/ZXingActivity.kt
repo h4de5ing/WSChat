@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.wschat.R
-import com.example.wschat.utils.resultChange
 import com.github.h4de5ing.zxing.view.ScanCodeView
 import com.google.zxing.Result
 
@@ -18,7 +17,6 @@ class ZXingActivity : AppCompatActivity() {
             override fun onScanCodeSucceed(result: Result) {
                 val code = result.text
                 Log.i("gh0st", "扫描结果：$code")
-                resultChange = code
                 setResult(RESULT_OK, Intent().putExtra("data", code))
                 finish()
             }

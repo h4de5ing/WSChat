@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 abstract class BaseSearchActivity : AppCompatActivity() {
     var searchView: SearchView? = null
-
     //第一行为标题 第二行为显示的内容 第三行为点击后的标记
     val allDataList = mutableListOf<Triple<String, String, String>>()
     var onClickItem = MutableLiveData<String>()
@@ -69,7 +68,7 @@ abstract class BaseSearchActivity : AppCompatActivity() {
 
     @SuppressLint("RestrictedApi")
     fun closeSearchView() {
-        //if (toolbar != null) toolbar.collapseActionView()
+        if (toolbar != null) toolbar.collapseActionView()
     }
 
     override fun onBackPressed() {

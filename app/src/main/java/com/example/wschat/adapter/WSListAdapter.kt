@@ -7,7 +7,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.example.wschat.R
 import com.example.wschat.db.MessageItem
 import com.example.wschat.ext.date
-import com.example.wschat.utils.CopyUtils
+import com.github.h4de5ing.baseui.CopyUtils
 
 
 class WSListAdapter constructor(layoutRes: Int = R.layout.item_tv) :

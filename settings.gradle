@@ -1,2 +1,7 @@
 rootProject.name = "WSChat"
 include ':app'
+include ':netlib'
+project(':netlib').projectDir = new File("D:\\repository\\repository_src\\NetLib")
+
+//include ':filepicker'
+//project(':filepicker').projectDir=new File("D:\\repository\\repository_src\\filepicker")

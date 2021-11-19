@@ -1,18 +1,19 @@
 package com.example.wschat.utils
 
-import kotlin.properties.Delegates
+import android.content.Context
+import android.graphics.Bitmap
+import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
+import com.example.wschat.R
 
-var change: Change? = null
-var resultChange: String by Delegates.observable("<no result>") { _, _, new ->
-    if (change != null) {
-        change!!.change(new)
-    }
-}
-
-fun setOnChange(onchange: Change) {
-    change = onchange
-}
-
-interface Change {
-    fun change(message:String)
+fun showImage(context: Context, bitmap: Bitmap) {
+    val alertBuilder = AlertDialog.Builder(context)
+    alertBuilder.setIcon(context.getDrawable(R.mipmap.ic_launcher))
+    alertBuilder.setTitle("二维码")
+    val iv = ImageView(context)
+    iv.setImageBitmap(bitmap)
+    alertBuilder.setView(iv)
+    alertBuilder.setPositiveButton(android.R.string.ok, null)
+    alertBuilder.setNegativeButton(android.R.string.cancel, null)
+    alertBuilder.create().show()
 }

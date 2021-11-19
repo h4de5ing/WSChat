@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wschat.R
 import com.example.wschat.db.MessageItem
-import com.example.wschat.utils.CopyUtils
+import com.github.h4de5ing.baseui.CopyUtils
 
 class MessagePagingAdapter(val context: Context) :
     BasePagingAdapter<MessageItem, ArchiveViewHolder2>(POST_COMPARATOR) {

@@ -1,5 +1,6 @@
 package com.example.wschat
 
+import android.content.Context
 import android.content.Intent
 import androidx.multidex.MultiDexApplication
 import androidx.preference.PreferenceManager
@@ -13,19 +14,21 @@ class App : MultiDexApplication() {
         var wsServer = "ws://172.16.1.45:8080/wschat-${UUID.randomUUID()}"
         var httpServer = "http://172.16.1.45:8080"
         lateinit var dao: MessageDao
+        lateinit var context: Context
     }
 
     override fun onCreate() {
         super.onCreate()
+        context = this
         dao = MessageDatabase.create(this).messageDao()
         loadConfig()
         startService(Intent(this, GuardService::class.java))
     }
 
-    fun loadConfig() {
+    private fun loadConfig() {
         val sp = PreferenceManager.getDefaultSharedPreferences(this)
         val signature = sp!!.getString("signature", "")
-        val http = sp!!.getString("http", "")
+        val http = sp.getString("http", "")
         signature?.apply {
             if (signature.isNotEmpty()) wsServer = signature
             else
