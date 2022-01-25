@@ -5,6 +5,7 @@ buildscript {
         google()
         jcenter()
         maven { url 'https://jitpack.io' }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.3'
@@ -20,6 +21,7 @@ allprojects {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         //maven { url 'https://gitee.com/lex1992/repository/raw/master/repository' }
         maven { url 'D://repository/repository/repository' }
     }
